@@ -6269,7 +6269,7 @@ $profiles = array(
 
 $moi = get_user_by("email", "brenda@gravityswitch.com");
 $them = get_user_by("email", "team@advantagelabs.com");
-$generic = get_user_by("email", "wdm@workdayminnesota.org");
+$generic = get_user_by("email", "brenda@gravityswitch.com");
 
 $bad_wpauthor_posts = new WP_Query(array(
   "post_type" => "post",
@@ -6309,16 +6309,14 @@ foreach ($bad_wpauthor_posts->posts as $this_post) {
         	));
 
           $message = $this_post->ID." SUCCESS? ".print_r($outcome, true)." earliestver: ".$earliest_version["vid"]."author ".$wp_version_of_author->ID;
-        }
-        else {
+        } else {
           $message = $this_post->ID." ERROR! no wp author found";
         }
       }
       else {
         $message = $this_post->ID." ERROR! no drupal author found";
       }
-    }
-    else {
+    } else {
       $message = $this_post->ID." WELL! no valid drupal post revisions found... assigning to generic user";
 
       wp_update_post( array (
@@ -6328,11 +6326,7 @@ foreach ($bad_wpauthor_posts->posts as $this_post) {
 
     }
 
-
-
-
-  }
-  else {
+  } else {
     $message = $this_post->ID." ERROR! no drupal nid found";
   }
 
@@ -6366,21 +6360,20 @@ foreach ($all_posts->posts as $this_post) {
         $profile = array_values(array_filter($profiles, function($v) use ($authref) {return $v["nid"] === $authref[0]["field_author_reference_target_id"];}));
         //var_dump($profile);
         if (!empty($profile)) {
-          var_dump($profile[0]["title"]);
+          // var_dump($profile[0]["title"]);
           update_post_meta($this_post->ID, "largo_byline_text", $profile[0]["title"]);
-          $message = $this_post->ID." NID:".$nid." WOO! added/updated byline data";
+          $message = $this_post->ID." NID:".$nid." WOO! added/updated byline data: " . var_export( $profile[0]['title'], true );
         }
         else {
-          $message .= $this_post->ID." NID:".$nid." ERROR! no byline data found";
+          $message .= $this_post->ID." NID:".$nid." ERROR! no byline data found. cause: empty profile";
         }
       }
       else {
-        $message .= $this_post->ID." NID:".$nid." ERROR! no byline data found";
+        $message .= $this_post->ID." NID:" . $nid . ' ERROR! no byline data found. cause: no $authref[0]["field_author_reference_target_id"]';
       }
     }
-  }
-  else {
-    $message .= $this_post->ID." NID:".$nid." ERROR! no byline data found";
+  } else {
+    $message .= $this_post->ID . "SKIP! no byline data found. cause: no nid in _fgd2wp_old_node_id post meta";
   }
 
   echo $message."\n";
