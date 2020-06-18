@@ -26,7 +26,8 @@ foreach ($all_posts->posts as $this_post) {
 
   // get the drupal id if it exists
   $nid = get_post_meta($this_post->ID, "_fgd2wp_old_node_id", true);
-  if (!empty($nid)) {
+  $largo_byline_text = get_post_meta($this_post->ID, "largo_byline_text", true);
+  if ( !empty( $nid )  && empty( $largo_byline_text ) ) {
     // enough revisions crap, do the byline
     $byline_data = array_values(array_filter($field_data_field_author, function($v) use ($nid) {return $v["entity_id"] === $nid;}));
     if (!empty($byline_data) && !empty($byline_data[0])) {
